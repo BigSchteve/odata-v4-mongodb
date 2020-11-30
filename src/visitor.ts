@@ -220,7 +220,7 @@ export class Visitor{
 		this.Visit(node.value.left, context);
 		this.Visit(node.value.right, context);
 
-		if (context.identifier) context.query[context.identifier] = context.literal;
+		if (context.identifier) context.query[context.identifier] = { $eq: context.literal };
 		delete context.identifier;
 		delete context.literal;
 	}
@@ -281,6 +281,7 @@ export class Visitor{
 			switch (method) {
 				case "contains":
 					context.query[context.identifier] = new RegExp(context.literal, "gi");
+					delete context.identifier;
 					break;
 				case "endswith":
 					context.query[context.identifier] = new RegExp(context.literal + "$", "gi");
@@ -288,10 +289,15 @@ export class Visitor{
 				case "startswith":
 					context.query[context.identifier] = new RegExp("^" + context.literal, "gi");
 					break;
+				case "tolower":
+					context.query[context.identifier] = new RegExp(context.literal, "gi");
+					break;
+				case "toupper":
+					context.query[context.identifier] = new RegExp(context.literal, "gi");
+					break;
 				default:
 					throw new Error("Method call not implemented.")
 			}
-			delete context.identifier;
 		}
 	}
 
